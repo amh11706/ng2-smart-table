@@ -1,7 +1,7 @@
 {
-  "name": "ng2-smart-table",
+  "name": "ng2-smart-table-combain",
   "version": "1.7.2",
-  "description": "Angular Smart Table",
+  "description": "Angular Smart Table with href links fixed for hash routing",
   "author": "akveo",
   "license": "MIT",
   "dependencies": {

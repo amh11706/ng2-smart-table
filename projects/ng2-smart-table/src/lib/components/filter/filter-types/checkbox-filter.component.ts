@@ -8,7 +8,7 @@ import { debounceTime } from 'rxjs/operators';
   selector: 'checkbox-filter',
   template: `
     <input type="checkbox" [formControl]="inputControl" [ngClass]="inputClass" class="form-control">
-    <a href="#" *ngIf="filterActive"
+    <a href="" *ngIf="filterActive"
                 (click)="resetFilter($event)">{{column.getFilterConfig()?.resetText || 'reset'}}</a>
   `,
 })
