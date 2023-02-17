@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter, OnChanges} from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 
 import { Grid } from '../../../lib/grid';
 import { DataSource } from '../../../lib/data-source/data-source';
@@ -28,8 +28,8 @@ import { Column } from "../../../lib/data-set/column";
 })
 export class TheadFitlersRowComponent implements OnChanges {
 
-  @Input() grid: Grid;
-  @Input() source: DataSource;
+  @Input() grid?: Grid;
+  @Input() source?: DataSource;
 
   @Output() create = new EventEmitter<any>();
   @Output() filter = new EventEmitter<any>();
@@ -40,10 +40,10 @@ export class TheadFitlersRowComponent implements OnChanges {
   filterInputClass: string;
 
   ngOnChanges() {
-    this.isMultiSelectVisible = this.grid.isMultiSelectVisible();
-    this.showActionColumnLeft = this.grid.showActionColumn('left');
-    this.showActionColumnRight = this.grid.showActionColumn('right');
-    this.filterInputClass = this.grid.getSetting('filter.inputClass');
+    this.isMultiSelectVisible = this.grid?.isMultiSelectVisible();
+    this.showActionColumnLeft = this.grid?.showActionColumn('left');
+    this.showActionColumnRight = this.grid?.showActionColumn('right');
+    this.filterInputClass = this.grid?.getSetting('filter.inputClass');
   }
 
   getVisibleColumns(columns: Array<Column>): Array<Column> {

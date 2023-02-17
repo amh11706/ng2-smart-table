@@ -3,13 +3,13 @@ import { Column } from './column';
 
 export class DataSet {
 
-  newRow: Row;
+  newRow?: Row;
 
   protected data: Array<any> = [];
   protected columns: Array<Column> = [];
   protected rows: Array<Row> = [];
-  protected selectedRow: Row;
-  protected willSelect: string;
+  protected selectedRow?: Row;
+  protected willSelect?: string;
 
   constructor(data: Array<any> = [], protected columnSettings: Object) {
     this.createColumns(columnSettings);
@@ -39,7 +39,7 @@ export class DataSet {
     return this.rows[this.rows.length - 1];
   }
 
-  findRowByData(data: any): Row {
+  findRowByData(data: any): Row | undefined {
     return this.rows.find((row: Row) => row.getData() === data);
   }
 
@@ -68,7 +68,7 @@ export class DataSet {
     return this.selectedRow;
   }
 
-  selectPreviousRow(): Row {
+  selectPreviousRow(): Row | undefined {
     if (this.rows.length > 0) {
       let index = this.selectedRow ? this.selectedRow.index : 0;
       if (index > this.rows.length - 1) {
@@ -77,6 +77,7 @@ export class DataSet {
       this.selectRow(this.rows[index]);
       return this.selectedRow;
     }
+    return;
   }
 
   selectFirstRow(): Row | undefined {
@@ -84,6 +85,7 @@ export class DataSet {
       this.selectRow(this.rows[0]);
       return this.selectedRow;
     }
+    return;
   }
 
   selectLastRow(): Row | undefined {
@@ -91,9 +93,10 @@ export class DataSet {
       this.selectRow(this.rows[this.rows.length - 1]);
       return this.selectedRow;
     }
+    return;
   }
 
-  selectRowByIndex(index: number): Row | undefined {
+  selectRowByIndex(index?: number): Row | undefined {
     const rowsLength: number = this.rows.length;
     if (rowsLength === 0) {
       return;
@@ -108,6 +111,7 @@ export class DataSet {
     }
     // we need to deselect all rows if we got an incorrect index
     this.deselectAll();
+    return;
   }
 
   willSelectFirstRow() {

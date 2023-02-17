@@ -13,7 +13,7 @@ export class Row {
     this.process();
   }
 
-  getCell(column: Column): Cell {
+  getCell(column: Column): Cell | undefined {
     return this.cells.find(el => el.getColumn() === column);
   }
 
@@ -50,7 +50,10 @@ export class Row {
 
   createCell(column: Column): Cell {
     const defValue = (column as any).settings.defaultValue ? (column as any).settings.defaultValue : '';
-    const value = typeof this.data[column.id] === 'undefined' ? defValue : this.data[column.id];
+    const parts = column.id.split('.');
+    const resolved = parts.reduce((prev: any, curr: string) => prev && prev[curr], this.data);
+    console.log(column, resolved)
+    const value = typeof resolved === 'undefined' ? defValue : resolved;
     return new Cell(value, this, column, this._dataSet);
   }
 }

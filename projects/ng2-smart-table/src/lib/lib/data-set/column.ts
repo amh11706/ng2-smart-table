@@ -16,10 +16,10 @@ export class Column {
   editor: { type: string, config: any, component: any } = { type: '', config: {}, component: null };
   filter: { type: string, config: any, component: any } = { type: '', config: {}, component: null };
   renderComponent: any = null;
-  compareFunction: Function;
-  valuePrepareFunction: Function;
-  filterFunction: Function;
-  onComponentInitFunction: Function;
+  compareFunction!: Function;
+  valuePrepareFunction!: Function;
+  filterFunction!: Function;
+  onComponentInitFunction!: Function;
 
   constructor(public id: string, protected settings: any, protected dataSet: DataSet) {
     this.process();
@@ -68,7 +68,7 @@ export class Column {
       .indexOf(this.settings['sortDirection']) !== -1 ? this.settings['sortDirection'] : '';
     this.isSortable = typeof this.settings['sort'] === 'undefined' ? true : !!this.settings['sort'];
     this.isEditable = typeof this.settings['editable'] === 'undefined' ? true : !!this.settings['editable'];
-    this.isAddable=typeof this.settings['addable'] === 'undefined' ? true : !!this.settings['addable'];
+    this.isAddable = typeof this.settings['addable'] === 'undefined' ? true : !!this.settings['addable'];
     this.sortDirection = this.prepareSortDirection();
 
     this.compareFunction = this.settings['compareFunction'];

@@ -30,15 +30,15 @@ export class Ng2SmartTableComponent implements OnChanges, OnDestroy {
   @Output() createConfirm = new EventEmitter<any>();
   @Output() rowHover: EventEmitter<any> = new EventEmitter<any>();
 
-  tableClass: string;
-  tableId: string;
-  perPageSelect: any;
-  isHideHeader: boolean;
-  isHideSubHeader: boolean;
-  isPagerDisplay: boolean;
-  rowClassFunction: Function;
+  tableClass?: string;
+  tableId?: string;
+  perPageSelect?: any;
+  isHideHeader?: boolean;
+  isHideSubHeader?: boolean;
+  isPagerDisplay?: boolean;
+  rowClassFunction: Function = () => null;
 
-  grid: Grid;
+  grid?: Grid;
   defaultSettings: Object = {
     mode: 'inline', // inline|external|click-to-edit
     selectMode: 'single', // single|multi
@@ -96,11 +96,12 @@ export class Ng2SmartTableComponent implements OnChanges, OnDestroy {
 
   isAllSelected: boolean = false;
 
-  private onSelectRowSubscription: Subscription;
-  private onDeselectRowSubscription: Subscription;
+  private onSelectRowSubscription?: Subscription;
+  private onDeselectRowSubscription?: Subscription;
   private destroyed$: Subject<void> = new Subject<void>();
 
   ngOnChanges(changes: { [propertyName: string]: SimpleChange }) {
+    console.log('ngOnChanges', changes)
     if (this.grid) {
       if (changes['settings']) {
         this.grid.setSettings(this.prepareSettings());
@@ -112,21 +113,21 @@ export class Ng2SmartTableComponent implements OnChanges, OnDestroy {
     } else {
       this.initGrid();
     }
-    this.tableId = this.grid.getSetting('attr.id');
-    this.tableClass = this.grid.getSetting('attr.class');
-    this.isHideHeader = this.grid.getSetting('hideHeader');
-    this.isHideSubHeader = this.grid.getSetting('hideSubHeader');
-    this.isPagerDisplay = this.grid.getSetting('pager.display');
-    this.isPagerDisplay = this.grid.getSetting('pager.display');
-    this.perPageSelect = this.grid.getSetting('pager.perPageSelect');
-    this.rowClassFunction = this.grid.getSetting('rowClassFunction');
+    this.tableId = this.grid?.getSetting('attr.id');
+    this.tableClass = this.grid?.getSetting('attr.class');
+    this.isHideHeader = this.grid?.getSetting('hideHeader');
+    this.isHideSubHeader = this.grid?.getSetting('hideSubHeader');
+    this.isPagerDisplay = this.grid?.getSetting('pager.display');
+    this.isPagerDisplay = this.grid?.getSetting('pager.display');
+    this.perPageSelect = this.grid?.getSetting('pager.perPageSelect');
+    this.rowClassFunction = this.grid?.getSetting('rowClassFunction');
   }
 
   ngOnDestroy(): void {
     this.destroyed$.next();
   }
 
-  selectRow(index: number, switchPageToSelectedRowPage: boolean = this.grid.getSetting('switchPageToSelectedRowPage')): void {
+  selectRow(index: number, switchPageToSelectedRowPage: boolean = this.grid?.getSetting('switchPageToSelectedRowPage')): void {
     if (!this.grid) {
       return;
     }
@@ -151,7 +152,7 @@ export class Ng2SmartTableComponent implements OnChanges, OnDestroy {
 
     }
 
-    const row: Row = this.grid.getRows()[index];
+    const row: Row = this.grid?.getRows()[index];
     if (row) {
       this.onSelectRow(row);
     } else {
@@ -161,12 +162,12 @@ export class Ng2SmartTableComponent implements OnChanges, OnDestroy {
   }
 
   private deselectAllRows(): void {
-    this.grid.dataSet.deselectAll();
-    this.emitDeselectRow(null);
+    this.grid?.dataSet?.deselectAll();
+    this.emitDeselectRow();
   }
 
   editRowSelect(row: Row) {
-    if (this.grid.getSetting('selectMode') === 'multi') {
+    if (this.grid?.getSetting('selectMode') === 'multi') {
       this.onMultipleSelectRow(row);
     } else {
       this.onSelectRow(row);
@@ -174,8 +175,8 @@ export class Ng2SmartTableComponent implements OnChanges, OnDestroy {
   }
 
   onUserSelectRow(row: Row) {
-    if (this.grid.getSetting('selectMode') !== 'multi') {
-      this.grid.selectRow(row);
+    if (this.grid?.getSetting('selectMode') !== 'multi') {
+      this.grid?.selectRow(row);
       this.emitUserSelectRow(row);
       this.emitSelectRow(row);
     }
@@ -186,21 +187,21 @@ export class Ng2SmartTableComponent implements OnChanges, OnDestroy {
   }
 
   multipleSelectRow(row: Row) {
-    this.grid.multipleSelectRow(row);
+    this.grid?.multipleSelectRow(row);
     this.emitUserSelectRow(row);
     this.emitSelectRow(row);
   }
 
   onSelectAllRows($event: any) {
     this.isAllSelected = !this.isAllSelected;
-    this.grid.selectAllRows(this.isAllSelected);
+    this.grid?.selectAllRows(this.isAllSelected);
 
-    this.emitUserSelectRow(null);
-    this.emitSelectRow(null);
+    this.emitUserSelectRow();
+    this.emitSelectRow();
   }
 
   onSelectRow(row: Row) {
-    this.grid.selectRow(row);
+    this.grid?.selectRow(row);
     this.emitSelectRow(row);
   }
 
@@ -246,8 +247,8 @@ export class Ng2SmartTableComponent implements OnChanges, OnDestroy {
     this.isAllSelected = false;
   }
 
-  private emitUserSelectRow(row: Row) {
-    const selectedRows = this.grid.getSelectedRows();
+  private emitUserSelectRow(row?: Row) {
+    const selectedRows = this.grid?.getSelectedRows();
 
     this.userRowSelect.emit({
       data: row ? row.getData() : null,
@@ -257,7 +258,7 @@ export class Ng2SmartTableComponent implements OnChanges, OnDestroy {
     });
   }
 
-  private emitSelectRow(row: Row) {
+  private emitSelectRow(row?: Row) {
     const data = {
       data: row ? row.getData() : null,
       isSelected: row ? row.getIsSelected() : null,
@@ -269,7 +270,7 @@ export class Ng2SmartTableComponent implements OnChanges, OnDestroy {
     }
   }
 
-  private emitDeselectRow(row: Row): void {
+  private emitDeselectRow(row?: Row): void {
     this.rowDeselect.emit({
       data: row ? row.getData() : null,
       isSelected: row ? row.getIsSelected() : null,
@@ -286,7 +287,7 @@ export class Ng2SmartTableComponent implements OnChanges, OnDestroy {
     if (this.onSelectRowSubscription) {
       this.onSelectRowSubscription.unsubscribe();
     }
-    this.onSelectRowSubscription = this.grid.onSelectRow()
+    this.onSelectRowSubscription = this.grid?.onSelectRow()
       .pipe(takeUntil(this.destroyed$))
       .subscribe((row) => {
         this.emitSelectRow(row);
@@ -297,7 +298,7 @@ export class Ng2SmartTableComponent implements OnChanges, OnDestroy {
     if (this.onDeselectRowSubscription) {
       this.onDeselectRowSubscription.unsubscribe();
     }
-    this.onDeselectRowSubscription = this.grid.onDeselectRow()
+    this.onDeselectRowSubscription = this.grid?.onDeselectRow()
       .pipe(takeUntil(this.destroyed$))
       .subscribe((row) => {
         this.emitDeselectRow(row);

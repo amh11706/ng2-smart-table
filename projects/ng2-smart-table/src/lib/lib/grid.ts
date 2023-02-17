@@ -12,15 +12,15 @@ export class Grid {
 
   createFormShown: boolean = false;
 
-  source: DataSource;
+  source?: DataSource;
   settings: any;
-  dataSet: DataSet;
+  dataSet?: DataSet;
 
   onSelectRowSource = new Subject<any>();
   onDeselectRowSource = new Subject<any>();
 
-  private sourceOnChangedSubscription: Subscription;
-  private sourceOnUpdatedSubscription: Subscription;
+  private sourceOnChangedSubscription?: Subscription;
+  private sourceOnUpdatedSubscription?: Subscription;
 
   constructor(source: DataSource, settings: any) {
     this.setSettings(settings);
@@ -52,8 +52,8 @@ export class Grid {
     return this.getSetting('selectMode') === 'multi';
   }
 
-  getNewRow(): Row {
-    return this.dataSet.newRow;
+  getNewRow(): Row | undefined {
+    return this.dataSet?.newRow;
   }
 
   setSettings(settings: Object) {
@@ -65,7 +65,7 @@ export class Grid {
     }
   }
 
-  getDataSet(): DataSet {
+  getDataSet(): DataSet | undefined {
     return this.dataSet;
   }
 
@@ -76,8 +76,8 @@ export class Grid {
     this.sourceOnChangedSubscription = this.source.onChanged().subscribe((changes: any) => this.processDataChange(changes));
 
     this.sourceOnUpdatedSubscription = this.source.onUpdated().subscribe((data: any) => {
-      const changedRow = this.dataSet.findRowByData(data);
-      changedRow.setData(data);
+      const changedRow = this.dataSet?.findRowByData(data);
+      changedRow?.setData(data);
     });
   }
 
@@ -86,19 +86,19 @@ export class Grid {
   }
 
   getColumns(): Array<Column> {
-    return this.dataSet.getColumns();
+    return this.dataSet?.getColumns() || [];
   }
 
   getRows(): Array<Row> {
-    return this.dataSet.getRows();
+    return this.dataSet?.getRows() || [];
   }
 
   selectRow(row: Row) {
-    this.dataSet.selectRow(row);
+    this.dataSet?.selectRow(row);
   }
 
   multipleSelectRow(row: Row) {
-    this.dataSet.multipleSelectRow(row);
+    this.dataSet?.multipleSelectRow(row);
   }
 
   onSelectRow(): Observable<any> {
@@ -121,9 +121,9 @@ export class Grid {
       if (deferred.resolve.skipAdd) {
         this.createFormShown = false;
       } else {
-        this.source.prepend(newData).then(() => {
+        this.source?.prepend(newData).then(() => {
           this.createFormShown = false;
-          this.dataSet.createNewRow();
+          this.dataSet?.createNewRow();
         });
       }
     }).catch((err) => {
@@ -149,7 +149,7 @@ export class Grid {
       if (deferred.resolve.skipEdit) {
         row.isInEditing = false;
       } else {
-        this.source.update(row.getData(), newData).then(() => {
+        this.source?.update(row.getData(), newData).then(() => {
           row.isInEditing = false;
         });
       }
@@ -173,7 +173,7 @@ export class Grid {
 
     const deferred = new Deferred();
     deferred.promise.then(() => {
-      this.source.remove(row.getData());
+      this.source?.remove(row.getData());
     }).catch((err) => {
       // doing nothing
     });
@@ -191,7 +191,7 @@ export class Grid {
 
   processDataChange(changes: any) {
     if (this.shouldProcessChange(changes)) {
-      this.dataSet.setData(changes['elements']);
+      this.dataSet?.setData(changes['elements']);
       if (this.getSetting('selectMode') !== 'multi') {
         const row = this.determineRowToSelect(changes);
 
@@ -220,39 +220,39 @@ export class Grid {
    *
    * TODO: move to selectable? Separate directive
    */
-  determineRowToSelect(changes: any): Row {
+  determineRowToSelect(changes: any): Row | undefined {
 
     if (['load', 'page', 'filter', 'sort', 'refresh'].indexOf(changes['action']) !== -1) {
-      return this.dataSet.select(this.getRowIndexToSelect());
+      return this.dataSet?.select(this.getRowIndexToSelect());
     }
 
     if (this.shouldSkipSelection()) {
-      return null;
+      return;
     }
 
     if (changes['action'] === 'remove') {
       if (changes['elements'].length === 0) {
         // we have to store which one to select as the data will be reloaded
-        this.dataSet.willSelectLastRow();
+        this.dataSet?.willSelectLastRow();
       } else {
-        return this.dataSet.selectPreviousRow();
+        return this.dataSet?.selectPreviousRow();
       }
     }
     if (changes['action'] === 'append') {
       // we have to store which one to select as the data will be reloaded
-      this.dataSet.willSelectLastRow();
+      this.dataSet?.willSelectLastRow();
     }
     if (changes['action'] === 'add') {
-      return this.dataSet.selectFirstRow();
+      return this.dataSet?.selectFirstRow();
     }
     if (changes['action'] === 'update') {
-      return this.dataSet.selectFirstRow();
+      return this.dataSet?.selectFirstRow();
     }
     if (changes['action'] === 'prepend') {
       // we have to store which one to select as the data will be reloaded
-      this.dataSet.willSelectFirstRow();
+      this.dataSet?.willSelectFirstRow();
     }
-    return null;
+    return;
   }
 
   prepareSource(source: any): DataSource {
@@ -281,21 +281,21 @@ export class Grid {
   }
 
   getSelectedRows(): Array<any> {
-    return this.dataSet.getRows()
-      .filter(r => r.isSelected);
+    return this.dataSet?.getRows()
+      .filter(r => r.isSelected) || [];
   }
 
   selectAllRows(status: any) {
-    this.dataSet.getRows()
+    this.dataSet?.getRows()
       .forEach(r => r.isSelected = status);
   }
 
-  getFirstRow(): Row {
-    return this.dataSet.getFirstRow();
+  getFirstRow(): Row | undefined {
+    return this.dataSet?.getFirstRow();
   }
 
-  getLastRow(): Row {
-    return this.dataSet.getLastRow();
+  getLastRow(): Row | undefined {
+    return this.dataSet?.getLastRow();
   }
 
   private getSelectionInfo(): { perPage: number, page: number, selectedRowIndex: number, switchPageToSelectedRowPage: boolean } {
@@ -307,7 +307,7 @@ export class Grid {
 
   private getRowIndexToSelect(): number {
     const { switchPageToSelectedRowPage, selectedRowIndex, perPage } = this.getSelectionInfo();
-    const dataAmount: number = this.source.count();
+    const dataAmount: number = this.source?.count() || 0;
     /**
      * source - contains all table data
      * dataSet - contains data for current page

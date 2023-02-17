@@ -28,7 +28,7 @@ import { Cell } from '../../../lib/data-set/cell';
 })
 export class TheadFormRowComponent implements OnChanges {
 
-  @Input() grid: Grid;
+  @Input() grid?: Grid;
   @Input() row: Row;
   @Input() createConfirm: EventEmitter<any>;
 
@@ -45,7 +45,7 @@ export class TheadFormRowComponent implements OnChanges {
     this.grid.create(this.grid.getNewRow(), this.createConfirm);
   }
 
-  ngOnChanges(){
+  ngOnChanges() {
     this.isMultiSelectVisible = this.grid.isMultiSelectVisible();
     this.showActionColumnLeft = this.grid.showActionColumn('left');
     this.showActionColumnRight = this.grid.showActionColumn('right');

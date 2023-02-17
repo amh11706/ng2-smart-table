@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter, } from '@angular/core';
+import { Component, Input, Output, EventEmitter, } from '@angular/core';
 
 import { Grid } from '../../lib/grid';
 import { DataSource } from '../../lib/data-source/data-source';
@@ -11,7 +11,7 @@ import { Cell } from '../../lib/data-set/cell';
 })
 export class Ng2SmartTableTbodyComponent {
 
-  @Input() grid: Grid;
+  @Input() grid?: Grid;
   @Input() source: DataSource;
   @Input() deleteConfirm: EventEmitter<any>;
   @Input() editConfirm: EventEmitter<any>;
